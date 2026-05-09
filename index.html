@@ -184,6 +184,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--warm);color:var(--text);l
     <button class="nav-btn" onclick="showPanel('timeline',this)">Timeline &amp; Stages</button>
     <button class="nav-btn" onclick="showPanel('who',this)">Who Is Involved</button>
     <button class="nav-btn" onclick="showPanel('deliverables',this)">All Deliverables</button>
+    <button class="nav-btn" onclick="showPanel('terms',this)">Data &amp; Terms</button>
     <button class="nav-btn" onclick="showPanel('discovery',this)">Sample Discovery Session</button>
     <button class="nav-btn" onclick="showPanel('prepform',this)">Sample Collection Form</button>
   </div>
@@ -804,7 +805,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--warm);color:var(--text);l
       <div class="del-section-header">
         <span class="del-section-badge dsb-net">Network</span>
         <span class="del-section-title">All 7 campuses · Chiffon's view</span>
-        <span class="del-section-count">3 deliverables</span>
+        <span class="del-section-count">4 deliverables</span>
       </div>
       <div class="del-table">
         <div class="del-row header-row">
@@ -831,12 +832,160 @@ body{font-family:'DM Sans',sans-serif;background:var(--warm);color:var(--text);l
           <div class="del-cell purpose-cell del-purpose">Not a separate deliverable so much as a structural feature of the entire build — every protocol at every level uses the same trigger language, the same escalation terminology, and the same monitoring indicators. When Chiffon walks into a principal meeting at any of the seven campuses, every principal describes students the same way.</div>
           <div class="del-cell who-col del-who-cell"><span class="del-who-tag wc-cso">CSO</span><span class="del-who-tag wc-p">All Principals</span></div>
         </div>
+        <div class="del-row">
+          <div class="del-cell accent accent-net"></div>
+          <div class="del-cell"><div class="del-name-text">Role-Specific Quick-Start Guides</div><div class="del-level-tag">Per campus · One guide per role · Delivered at orientation</div></div>
+          <div class="del-cell purpose-cell del-purpose">Every person who touches the system receives exactly one page — what they do, when they do it, and what happens next. Not a summary of the full protocol. The specific actions for their role, written so they can answer "what do I do Monday morning?" without opening anything else. Separate from the campus protocol document; this is what each person carries.</div>
+          <div class="del-cell who-col del-who-cell"><span class="del-who-tag wc-t">Teachers</span><span class="del-who-tag wc-f">Fellows</span><span class="del-who-tag wc-p">Principals</span><span class="del-who-tag wc-c">Counselors</span></div>
+        </div>
       </div>
     </div>
 
   </div>
 </div>
 
+
+<!-- ══ ENGAGEMENT TERMS ════════════════════════════════════════ -->
+<div id="panel-terms" class="panel">
+  <div class="container">
+    <div class="panel-label">How this works · Before we begin</div>
+    <div class="panel-title">Data, ownership, and next steps</div>
+    <div class="panel-intro">Four things worth naming before the engagement opens — how data moves, who owns what at the end, how the engagement starts, and when it runs.</div>
+
+    <style>
+      .terms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 32px; }
+      @media(max-width:680px){ .terms-grid { grid-template-columns: 1fr; } }
+      .terms-card {
+        background: var(--white); border: 1px solid var(--border);
+        border-radius: 14px; padding: 28px 28px 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,.04);
+      }
+      .terms-card-label {
+        font-family: 'DM Mono', monospace; font-size: 9.5px;
+        letter-spacing: .12em; text-transform: uppercase;
+        color: var(--text-light); margin-bottom: 10px;
+      }
+      .terms-card-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 18px; color: var(--text); margin-bottom: 12px;
+      }
+      .terms-card-body { font-size: 13.5px; color: var(--text-mid); line-height: 1.7; }
+      .terms-card-body strong { color: var(--text); font-weight: 600; }
+      .terms-steps { display: flex; flex-direction: column; gap: 14px; margin-top: 4px; }
+      .terms-step { display: flex; gap: 14px; align-items: flex-start; }
+      .terms-step-num {
+        width: 26px; height: 26px; border-radius: 50%;
+        background: var(--teal); color: var(--dark);
+        font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; margin-top: 2px;
+      }
+      .terms-step-text { font-size: 13.5px; color: var(--text-mid); line-height: 1.6; }
+      .terms-step-text strong { color: var(--text); }
+      .terms-card.full-width { grid-column: 1 / -1; }
+      .calendar-bar {
+        display: flex; gap: 0; margin-top: 16px;
+        border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+      }
+      .cal-block {
+        flex: 1; padding: 12px 14px; border-right: 1px solid var(--border);
+        font-size: 12px;
+      }
+      .cal-block:last-child { border-right: none; }
+      .cal-month {
+        font-family: 'DM Mono', monospace; font-size: 9px;
+        letter-spacing: .1em; text-transform: uppercase;
+        color: var(--teal); margin-bottom: 4px;
+      }
+      .cal-stage { font-weight: 600; color: var(--text); font-size: 12px; margin-bottom: 2px; }
+      .cal-detail { color: var(--text-mid); font-size: 11.5px; line-height: 1.5; }
+      @media(max-width:600px){
+        .calendar-bar { flex-direction: column; }
+        .cal-block { border-right: none; border-bottom: 1px solid var(--border); }
+        .cal-block:last-child { border-bottom: none; }
+      }
+    </style>
+
+    <div class="terms-grid">
+
+      <!-- DATA FLOW -->
+      <div class="terms-card">
+        <div class="terms-card-label">Data flow</div>
+        <div class="terms-card-title">How data moves — and what EJC never touches</div>
+        <div class="terms-card-body">
+          <p style="margin-bottom:10px;">EJC does not have direct access to any GOL student information system. All data used to build and run the protocols moves through your designated data coordinator.</p>
+          <p style="margin-bottom:10px;"><strong>i-Ready diagnostic exports</strong> — delivered by your data coordinator as CSV or Excel on the agreed cycle schedule. EJC builds from exports; no platform login required.</p>
+          <p style="margin-bottom:10px;"><strong>Student Transition Records</strong> — generated from data your ES teams have already entered. No additional data entry required from campus staff.</p>
+          <p><strong>No direct system access.</strong> No student PII beyond what appears in coordinator-delivered exports. GOL retains all data at all times.</p>
+        </div>
+      </div>
+
+      <!-- OWNERSHIP -->
+      <div class="terms-card">
+        <div class="terms-card-label">Ownership</div>
+        <div class="terms-card-title">What GOL owns on the day the engagement closes</div>
+        <div class="terms-card-body">
+          <p style="margin-bottom:10px;">Every protocol, guide, monitoring sheet, and view built during this engagement is GOL's on final payment. No license. No recurring fee. No dependency on EJC to run what was built.</p>
+          <p style="margin-bottom:10px;"><strong>All tools and documentation</strong> are transferred to your designated network lead at the day-60 confirmation.</p>
+          <p style="margin-bottom:10px;"><strong>All access credentials</strong> for any platform layer are transferred to GOL at go-live. EJC retains no access after the engagement closes.</p>
+          <p>The system was built to run without us. That is the point.</p>
+        </div>
+      </div>
+
+      <!-- PAYMENT -->
+      <div class="terms-card">
+        <div class="terms-card-label">How the engagement opens</div>
+        <div class="terms-card-title">Three steps to begin</div>
+        <div class="terms-steps">
+          <div class="terms-step">
+            <div class="terms-step-num">01</div>
+            <div class="terms-step-text"><strong>Send pre-engagement materials.</strong> Campus schedules, i-Ready export sample, data coordinator contact, current fellow assignment process. One document per campus. EJC sends the intake template.</div>
+          </div>
+          <div class="terms-step">
+            <div class="terms-step-num">02</div>
+            <div class="terms-step-text"><strong>EJC issues the deposit invoice.</strong> 25% of the engagement total, due on receipt. Discovery opens within 48 hours of payment confirmation.</div>
+          </div>
+          <div class="terms-step">
+            <div class="terms-step-num">03</div>
+            <div class="terms-step-text"><strong>Balance due at go-live.</strong> Remaining 75% invoiced at system go-live, Net 30. Payment by check, ACH, or charter network procurement process.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALENDAR -->
+      <div class="terms-card">
+        <div class="terms-card-label">Calendar anchor</div>
+        <div class="terms-card-title">Discovery begins the week of June 2, 2026</div>
+        <div class="terms-card-body" style="margin-bottom:14px;">
+          Elementary campuses orientation-ready before July 25. All seven campuses active at the first week of school. Student Transition Records delivered before August orientation.
+        </div>
+        <div class="calendar-bar">
+          <div class="cal-block">
+            <div class="cal-month">June · Wks 1–2</div>
+            <div class="cal-stage">Discovery</div>
+            <div class="cal-detail">One session per campus · Build briefs confirmed</div>
+          </div>
+          <div class="cal-block">
+            <div class="cal-month">June–July · Wks 3–7</div>
+            <div class="cal-stage">Build</div>
+            <div class="cal-detail">ES first · MS · HS · Chiffon reviews each</div>
+          </div>
+          <div class="cal-block">
+            <div class="cal-month">Late July · Wk 8</div>
+            <div class="cal-stage">Orientation</div>
+            <div class="cal-detail">90 min per campus · All roles · Active before Aug</div>
+          </div>
+          <div class="cal-block">
+            <div class="cal-month">Aug–Oct · Wks 9–14</div>
+            <div class="cal-stage">Launch</div>
+            <div class="cal-detail">First cycle · Day-30 check-in · Day-60 handoff</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <!-- ══ SAMPLE DISCOVERY SESSION ══════════════════════════════════ -->
 <div id="panel-discovery" class="panel">
