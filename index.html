@@ -184,6 +184,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--warm);color:var(--text);l
     <button class="nav-btn" onclick="showPanel('timeline',this)">Timeline &amp; Stages</button>
     <button class="nav-btn" onclick="showPanel('who',this)">Who Is Involved</button>
     <button class="nav-btn" onclick="showPanel('deliverables',this)">All Deliverables</button>
+    <button class="nav-btn" onclick="showPanel('discovery',this)">Sample Discovery Session</button>
+    <button class="nav-btn" onclick="showPanel('prepform',this)">Sample Collection Form</button>
   </div>
 </div>
 
@@ -834,6 +836,1232 @@ body{font-family:'DM Sans',sans-serif;background:var(--warm);color:var(--text);l
 
   </div>
 </div>
+
+
+<!-- ══ SAMPLE DISCOVERY SESSION ══════════════════════════════════ -->
+<div id="panel-discovery" class="panel">
+  <div class="container">
+
+    <style>
+      .disc-intro {
+        background: var(--dark);
+        border-radius: 14px;
+        padding: 28px 32px;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+      }
+      .disc-intro::before {
+        content: '';
+        position: absolute;
+        top: -80px; right: -60px;
+        width: 260px; height: 260px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(26,188,176,.1) 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .disc-intro-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; letter-spacing: .13em;
+        text-transform: uppercase; color: var(--teal);
+        margin-bottom: 10px;
+      }
+      .disc-intro-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 22px; color: var(--white);
+        margin-bottom: 12px; line-height: 1.25;
+      }
+      .disc-intro-body {
+        font-size: 14px; color: rgba(255,255,255,.65);
+        line-height: 1.75; max-width: 680px;
+        font-weight: 300;
+      }
+      .disc-meta {
+        display: flex; gap: 20px; flex-wrap: wrap;
+        margin-top: 20px; padding-top: 20px;
+        border-top: 1px solid rgba(255,255,255,.08);
+      }
+      .disc-meta-item {
+        display: flex; align-items: center; gap: 8px;
+        font-size: 12px; color: rgba(255,255,255,.45);
+        font-family: 'DM Mono', monospace; letter-spacing: .06em;
+      }
+      .disc-meta-dot {
+        width: 5px; height: 5px; border-radius: 50%;
+        background: var(--teal); flex-shrink: 0;
+      }
+
+      /* ── Bring section ── */
+      .bring-section { margin-bottom: 40px; }
+      .bring-header {
+        display: flex; align-items: center; gap: 12px;
+        margin-bottom: 20px; padding-bottom: 14px;
+        border-bottom: 2px solid var(--border);
+      }
+      .bring-icon {
+        width: 38px; height: 38px; border-radius: 10px;
+        background: var(--blue-light);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 17px; flex-shrink: 0;
+      }
+      .bring-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 21px; color: var(--text);
+      }
+      .bring-sub { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+      .bring-grid {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      @media(max-width:640px){ .bring-grid{ grid-template-columns: 1fr; } }
+      .bring-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 12px; padding: 18px 20px;
+        display: flex; gap: 14px; align-items: flex-start;
+        box-shadow: 0 1px 8px rgba(0,0,0,.04);
+        transition: box-shadow .15s;
+      }
+      .bring-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); }
+      .bring-num {
+        width: 26px; height: 26px; border-radius: 50%;
+        background: var(--blue-light); color: var(--blue);
+        font-family: 'DM Mono', monospace;
+        font-size: 11px; font-weight: 500;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; margin-top: 1px;
+      }
+      .bring-card-title {
+        font-size: 13.5px; font-weight: 600;
+        color: var(--text); margin-bottom: 5px;
+      }
+      .bring-card-body {
+        font-size: 12.5px; color: var(--text-mid);
+        line-height: 1.6;
+      }
+      .bring-note {
+        background: var(--teal-light);
+        border-radius: 10px; padding: 14px 18px;
+        margin-top: 14px;
+        font-size: 13px; color: var(--teal-deep);
+        line-height: 1.65;
+      }
+      .bring-note strong { font-weight: 600; }
+
+      /* ── Questions section ── */
+      .q-section { margin-bottom: 40px; }
+      .q-section-header {
+        display: flex; align-items: center; gap: 12px;
+        margin-bottom: 20px; padding-bottom: 14px;
+        border-bottom: 2px solid var(--border);
+      }
+      .q-icon {
+        width: 38px; height: 38px; border-radius: 10px;
+        background: var(--orange-light);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 17px; flex-shrink: 0;
+      }
+      .q-section-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 21px; color: var(--text);
+      }
+      .q-section-sub { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+
+      .q-area { margin-bottom: 16px; }
+      .q-area-header {
+        display: flex; align-items: center; gap: 12px;
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 12px 12px 0 0;
+        padding: 16px 20px;
+        cursor: pointer;
+        user-select: none;
+        border-bottom: none;
+      }
+      .q-area.closed .q-area-header {
+        border-radius: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .q-area-badge {
+        font-family: 'DM Mono', monospace;
+        font-size: 9.5px; font-weight: 500;
+        letter-spacing: .09em; text-transform: uppercase;
+        padding: 4px 10px; border-radius: 20px;
+        flex-shrink: 0;
+      }
+      .qab-1 { background: var(--teal-light); color: var(--teal-deep); }
+      .qab-2 { background: var(--blue-light); color: var(--blue); }
+      .qab-3 { background: var(--orange-light); color: #7A3D0A; }
+      .qab-4 { background: var(--green-light); color: var(--green); }
+      .qab-5 { background: var(--purple-light); color: var(--purple); }
+      .qab-6 { background: #F0FDF4; color: #166534; }
+      .q-area-name {
+        font-size: 14px; font-weight: 600; color: var(--text);
+      }
+      .q-area-tag {
+        font-size: 11.5px; color: var(--text-light); margin-left: auto;
+      }
+      .q-chevron {
+        font-size: 12px; color: var(--text-light);
+        transition: transform .25s; margin-left: 8px;
+      }
+      .q-area:not(.closed) .q-chevron { transform: rotate(180deg); }
+
+      .q-area-body {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-top: none;
+        border-radius: 0 0 12px 12px;
+        padding: 0 20px 20px;
+      }
+      .q-area.closed .q-area-body { display: none; }
+
+      .q-item {
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+        display: flex; gap: 14px; align-items: flex-start;
+      }
+      .q-item:last-child { border-bottom: none; }
+      .q-bullet {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: var(--teal); margin-top: 7px; flex-shrink: 0;
+      }
+      .q-text { font-size: 13.5px; color: var(--text); line-height: 1.65; }
+      .q-text strong { font-weight: 600; }
+      .q-listen {
+        background: var(--warm);
+        border-left: 3px solid var(--orange);
+        border-radius: 0 8px 8px 0;
+        padding: 10px 14px;
+        margin-top: 8px;
+        font-size: 12.5px; color: var(--text-mid);
+        line-height: 1.6;
+      }
+      .q-listen-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 9px; font-weight: 500;
+        letter-spacing: .1em; text-transform: uppercase;
+        color: var(--orange); margin-bottom: 4px;
+      }
+
+      /* ── Outcomes section ── */
+      .outcome-section { margin-bottom: 40px; }
+      .outcome-header {
+        display: flex; align-items: center; gap: 12px;
+        margin-bottom: 20px; padding-bottom: 14px;
+        border-bottom: 2px solid var(--border);
+      }
+      .out-icon {
+        width: 38px; height: 38px; border-radius: 10px;
+        background: var(--green-light);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 17px; flex-shrink: 0;
+      }
+      .out-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 21px; color: var(--text);
+      }
+      .out-sub { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+
+      .brief-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 14px; overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,.04);
+        margin-bottom: 16px;
+      }
+      .brief-section-head {
+        display: flex; align-items: center; gap: 10px;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--warm);
+      }
+      .brief-section-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 9.5px; font-weight: 500;
+        letter-spacing: .1em; text-transform: uppercase;
+        color: var(--text-light);
+      }
+      .brief-section-name {
+        font-size: 13px; font-weight: 600; color: var(--text);
+      }
+      .brief-accent {
+        width: 4px; height: 20px; border-radius: 2px; flex-shrink: 0;
+      }
+      .brief-body { padding: 18px 20px; }
+      .brief-row {
+        display: grid; grid-template-columns: 180px 1fr;
+        gap: 0; padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .brief-row:last-child { border-bottom: none; }
+      .brief-field {
+        font-weight: 600; color: var(--text);
+        font-size: 12px; padding-right: 16px;
+        display: flex; align-items: flex-start;
+        padding-top: 1px;
+      }
+      .brief-value { color: var(--text-mid); line-height: 1.6; }
+      .brief-value.filled { color: var(--text); font-style: italic; }
+
+      .out-note {
+        background: var(--dark);
+        border-radius: 12px; padding: 20px 24px;
+        margin-top: 8px;
+      }
+      .out-note-title {
+        font-family: 'DM Mono', monospace;
+        font-size: 9.5px; letter-spacing: .1em;
+        text-transform: uppercase; color: var(--teal);
+        margin-bottom: 8px; font-weight: 500;
+      }
+      .out-note-body {
+        font-size: 13.5px; color: rgba(255,255,255,.7);
+        line-height: 1.7; font-weight: 300;
+      }
+    </style>
+
+    <div class="panel-label">Middle School · Discovery Session · Sample</div>
+    <div class="panel-title">What a discovery session looks like</div>
+    <div class="panel-intro">This is a sample of what happens when Tyra sits down with one of your three middle school principals. Every campus gets its own session. Nothing is assumed in advance. The protocol built for Downtown Middle is not the same protocol built for Fairmount Heights Middle — because the schedule, the staffing, and the data reality are different at every campus.</div>
+
+    <!-- INTRO CARD -->
+    <div class="disc-intro">
+      <div class="disc-intro-label">Middle School · Tutor Corps Alignment Build</div>
+      <div class="disc-intro-title">One conversation.<br>One campus-specific build brief.</div>
+      <div class="disc-intro-body">This session is not an audit and it is not an evaluation. The principal does not need to have the right answers. The goal is to understand exactly how things work right now — the schedule as it actually runs, not as it was designed; the fellow assignments as they actually happen, not as the roster says they should. Everything built comes from this conversation.</div>
+      <div class="disc-meta">
+        <div class="disc-meta-item"><span class="disc-meta-dot"></span>90 minutes · one sitting</div>
+        <div class="disc-meta-item"><span class="disc-meta-dot"></span>Principal + Dean of Fellows</div>
+        <div class="disc-meta-item"><span class="disc-meta-dot"></span>Tyra Harrison · EJC</div>
+        <div class="disc-meta-item"><span class="disc-meta-dot"></span>Output: campus build brief reviewed by Chiffon before build begins</div>
+      </div>
+    </div>
+
+    <!-- WHAT TO BRING -->
+    <div class="bring-section">
+      <div class="bring-header">
+        <div class="bring-icon">📋</div>
+        <div>
+          <div class="bring-title">What the principal brings</div>
+          <div class="bring-sub">Six items · No preparation required beyond pulling what already exists</div>
+        </div>
+      </div>
+      <div class="bring-grid">
+        <div class="bring-card">
+          <div class="bring-num">1</div>
+          <div>
+            <div class="bring-card-title">Current master schedule — intervention block</div>
+            <div class="bring-card-body">The actual schedule showing when the Strong Roots or equivalent intervention block runs for each grade, who leads it, and what the block looks like on a typical day. A printed or screen-shared copy is fine.</div>
+          </div>
+        </div>
+        <div class="bring-card">
+          <div class="bring-num">2</div>
+          <div>
+            <div class="bring-card-title">i-Ready diagnostic report — most recent cycle</div>
+            <div class="bring-card-body">The class-level or grade-level diagnostic report from the most recent i-Ready cycle. It does not need to be formatted or summarized — the raw report is exactly what is needed to understand how data currently flows from assessment to action.</div>
+          </div>
+        </div>
+        <div class="bring-card">
+          <div class="bring-num">3</div>
+          <div>
+            <div class="bring-card-title">Fellow roster and current assignments</div>
+            <div class="bring-card-body">The list of fellows currently assigned to this campus, which students or groups each fellow is working with, and how those assignments were made. If there is a written assignment sheet or spreadsheet, bring it. If assignments are informal, that is important to know too.</div>
+          </div>
+        </div>
+        <div class="bring-card">
+          <div class="bring-num">4</div>
+          <div>
+            <div class="bring-card-title">Whetstone observation data — last 90 days</div>
+            <div class="bring-card-body">Observation records from the past 90 days for fellows working in the intervention block. The focus is on what is being observed and whether observation cycles are connected to what fellows are being asked to do with students.</div>
+          </div>
+        </div>
+        <div class="bring-card">
+          <div class="bring-num">5</div>
+          <div>
+            <div class="bring-card-title">Any active SBIT or SOC documentation</div>
+            <div class="bring-card-body">Current Student of Concern forms or active School-Based Intervention Team documentation for students currently receiving Tier 2 or Tier 3 support. This helps establish the boundary between what the tutor corps handles and what is already in a formal intervention plan.</div>
+          </div>
+        </div>
+        <div class="bring-card">
+          <div class="bring-num">6</div>
+          <div>
+            <div class="bring-card-title">Five to eight students the principal is thinking about</div>
+            <div class="bring-card-body">Not a formal list — just the names that come to mind when the principal asks themselves: which students am I watching right now who are not moving the way I expect them to? These students anchor the entire discovery conversation in real cases rather than abstract process.</div>
+          </div>
+        </div>
+      </div>
+      <div class="bring-note"><strong>A note on preparation:</strong> The principal does not need to analyze or summarize any of these materials before the session. Bringing them as they exist — even if they are incomplete or informal — is exactly right. The discovery session is designed to work with reality, not with polished documentation.</div>
+    </div>
+
+    <!-- DISCOVERY QUESTIONS -->
+    <div class="q-section">
+      <div class="q-section-header">
+        <div class="q-icon">💬</div>
+        <div>
+          <div class="q-section-title">The discovery questions</div>
+          <div class="q-section-sub">Five areas · Plain language · No right answers</div>
+        </div>
+      </div>
+
+      <!-- Area 1: The Schedule -->
+      <div class="q-area" id="qa1">
+        <div class="q-area-header" onclick="toggleQArea(1)">
+          <span class="q-area-badge qab-1">The Schedule</span>
+          <span class="q-area-name">How the intervention block actually runs</span>
+          <span class="q-area-tag">3 questions</span>
+          <span class="q-chevron">▼</span>
+        </div>
+        <div class="q-area-body">
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">When does the intervention block run for each grade, and <strong>who has the authority to protect it</strong> when something else competes for that time? What most commonly pulls students out of the block during a typical week?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                Whether the block is structurally protected or whether it runs at the discretion of whoever is managing the day. A block that competes with assemblies, pull-outs, and testing is not a block that can carry a routing protocol — the protocol will collapse the first week a conflict arises.
+              </div>
+            </div>
+          </div>
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">When a fellow is absent, <strong>what happens to the students assigned to that fellow?</strong> Is there a sub protocol, a coverage plan, or does the session simply not happen?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                The fragility of the current system. If the intervention depends entirely on one fellow being present, the most vulnerable students lose their support the most often — because coverage gaps fall unevenly. This shapes how the protocol handles continuity.
+              </div>
+            </div>
+          </div>
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">Walk me through what the block looks like on a day it runs well. <strong>What time does it start, who is in the room, what are students doing</strong> when they arrive, and how does the fellow know what to work on?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                The gap between the intended model and the actual practice. Principals describe the ideal; what comes out in the details reveals the real structure — or the absence of one.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Area 2: The Assignment -->
+      <div class="q-area closed" id="qa2">
+        <div class="q-area-header" onclick="toggleQArea(2)">
+          <span class="q-area-badge qab-2">The Assignment</span>
+          <span class="q-area-name">How fellows are matched to students</span>
+          <span class="q-area-tag">3 questions</span>
+          <span class="q-chevron">▼</span>
+        </div>
+        <div class="q-area-body">
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">Right now, <strong>who makes the decision about which fellow works with which students</strong> — and what information goes into that decision? Is it based on the diagnostic, on schedule availability, on teacher request, or on something else?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                Whether assignment is systematic or relational. In most tutor programs, assignments are driven by availability and familiarity — not by what the diagnostic says the student needs. That is not a failure of the people involved; it is a missing protocol.
+              </div>
+            </div>
+          </div>
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">How often do fellow assignments change during the year — and <strong>what triggers a change?</strong> Does the diagnostic cycle produce new assignments, or do fellows tend to stay with the same students from September through June?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                Whether the assignment system is dynamic or static. A fellow-student relationship built on familiarity has real value — the protocol does not eliminate it. But if assignments never change regardless of what the diagnostic shows, students who are ready to move up or down in intensity are stuck.
+              </div>
+            </div>
+          </div>
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">Of the five to eight students you brought to this session — <strong>look at each one's current fellow assignment.</strong> Was that assignment made because of what the diagnostic said, or for a different reason?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                The real assignment logic, grounded in specific students the principal already knows. This question tends to be where principals recognize the gap themselves — because when they look at actual students, the mismatch between diagnostic data and assignment becomes visible.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Area 3: The Data -->
+      <div class="q-area closed" id="qa3">
+        <div class="q-area-header" onclick="toggleQArea(3)">
+          <span class="q-area-badge qab-3">The Data</span>
+          <span class="q-area-name">Screening, identification, and how data moves to support</span>
+          <span class="q-area-tag">3 questions</span>
+          <span class="q-chevron">&#9660;</span>
+        </div>
+        <div class="q-area-body">
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">What does it actually take for a student to be identified for Tutor Corps support at this campus &#8212; and is that threshold written down anywhere? Is it a specific i-Ready diagnostic score, a score plus a teacher flag, a set number of consecutive cycles below benchmark, or something else? <strong>Who makes the final identification decision, and how is it documented?</strong></div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                Whether identification is systematic or discretionary. In most tutor programs, identification is driven by teacher concern rather than a defined screening threshold &#8212; which means students who have a strong relationship with their teacher get referred, and students who don&#8217;t may not. A shared threshold that applies consistently across the campus is one of the core outputs of the build. This question establishes what that threshold currently is, or whether one needs to be built from scratch.
+              </div>
+            </div>
+          </div>
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">When the diagnostic cycle closes and results come in, <strong>where do those results actually go &#8212; and in what form does the Dean of Fellows or a classroom teacher access them?</strong> Is it a report inside i-Ready, a pull the data coordinator runs, a spreadsheet someone maintains, or something else? When the Dean of Fellows sits down to assign fellows for the week, what does she look at, and where did that information come from?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                The distance between the data and the people who need to act on it. A diagnostic score that lives in i-Ready but never reaches the fellow before the session is not a usable data point for the protocol. Your team is already running these cycles &#8212; this question is about understanding where the output lands and who touches it before it reaches the fellow. The protocol is built around the data pathway that actually exists, not the one that was intended.
+              </div>
+            </div>
+          </div>
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">EJC does not access student records directly and does not receive files with student names or ID numbers. <strong>Who is the campus data coordinator, and what does a de-identified data pull typically look like for them &#8212; a routine export, or something that requires advance planning?</strong></div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces &#8212; and why it accelerates the build</div>
+                To build the routing protocol, EJC needs structural information only: how many students per grade are below benchmark, what the score distribution looks like across the current cycle, and how existing intervention groups are structured. That information travels from the data coordinator to EJC with all student identifiers removed before it leaves the district&#8217;s system. Your team is already producing this data &#8212; this question determines the lead time needed to package it in a way that protects student privacy and gets the build started without slowing anyone down. A coordinator who can run a de-identified export in an afternoon sets a different build timeline than one who needs two weeks. Both are workable. Knowing the answer here is what allows EJC to sequence the work correctly.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ejc-role-box" style="margin: 0 20px 20px;">
+          <div class="ejc-role-label">EJC on student data</div>
+          <div class="ejc-role-text">EJC works from de-identified structural data only. Student names and ID numbers never leave the district&#8217;s custody. The district data coordinator owns all data movement within the district&#8217;s own environment. EJC receives only the aggregate information needed to build the routing logic &#8212; score distributions, group structures, identification thresholds &#8212; not individual student records.</div>
+        </div>
+      </div>
+    </div>
+
+      <!-- Area 4: The Data Handoff -->
+      <div class="q-area closed" id="qa4" id="qa3">
+        <div class="q-area-header" onclick="toggleQArea(4)">
+          <span class="q-area-badge qab-4">The Data Handoff</span>
+          <span class="q-area-name">What the fellow knows before the session starts</span>
+          <span class="q-area-tag">3 questions</span>
+          <span class="q-chevron">▼</span>
+        </div>
+        <div class="q-area-body">
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">Before a fellow sits down with a student on Monday morning, <strong>what do they know about that student?</strong> Where did that information come from, and when did they receive it?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                Whether fellows are working from current data or from impressions accumulated over time. In most programs, the answer is that fellows know what they have learned from working with the student — which is valuable, but it is not the same as knowing what the diagnostic said last cycle.
+              </div>
+            </div>
+          </div>
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">After a fellow session, <strong>does the classroom teacher learn what happened?</strong> Is there a structured way that information travels from the fellow back to the teacher, or does it depend on those two people finding each other?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                Whether there is a closed loop or an open one. A teacher who submitted a concern about a student and never hears back stops submitting concerns. The protocol has to close the loop — documented, not conversational.
+              </div>
+            </div>
+          </div>
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">When the i-Ready diagnostic cycle closes and new scores come in, <strong>how does that information reach the fellow?</strong> Is there a formal process, or does the fellow access it independently if they know to look?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                The data handoff gap — the most common place where a well-resourced tutor program produces general support instead of targeted intervention. The fellow has to know what the data says before the session, not after it.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Area 4: The Movement Trigger -->
+      <div class="q-area closed" id="qa5">
+        <div class="q-area-header" onclick="toggleQArea(5)">
+          <span class="q-area-badge qab-5">The Movement Trigger</span>
+          <span class="q-area-name">When and how a student moves up or out</span>
+          <span class="q-area-tag">3 questions</span>
+          <span class="q-chevron">▼</span>
+        </div>
+        <div class="q-area-body">
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">When a student has been in the intervention block for a full cycle without showing progress, <strong>what triggers the next conversation?</strong> Who initiates it, when does it happen, and what are the possible outcomes?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                Whether there is a named decision point or an ambiguous one. In most schools, the answer involves a data meeting at some point — but the specific trigger, the specific person who calls the conversation, and the specific window it operates in are rarely named. That gap is where students stay in the same level of support for an entire year.
+              </div>
+            </div>
+          </div>
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">Of the five to eight students you brought — <strong>for any student who has been in the current support level for more than one diagnostic cycle,</strong> what is the documented reason they have not moved? Is that reason written down anywhere?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                Whether movement decisions are documented or assumed. A student who has been in the same level for two cycles without a documented rationale is likely not being held there intentionally — they have simply not been reviewed. The protocol closes that window.
+              </div>
+            </div>
+          </div>
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">When a student's needs exceed what the tutor corps can provide — <strong>what is the pathway from the intervention block to a more intensive response?</strong> Who owns that decision at this campus, and how long does it typically take?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                The escalation pathway — and whether it exists as a named protocol or as a series of conversations that may or may not happen in a predictable timeframe. The SBIT process provides the formal structure; this question establishes whether the informal pathway that feeds into it is working.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Area 5: Connection to Tier 1 -->
+      <div class="q-area closed" id="qa6">
+        <div class="q-area-header" onclick="toggleQArea(6)">
+          <span class="q-area-badge qab-6">The Tier 1 Connection</span>
+          <span class="q-area-name">What the classroom teacher knows and when</span>
+          <span class="q-area-tag">2 questions</span>
+          <span class="q-chevron">▼</span>
+        </div>
+        <div class="q-area-body">
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">When a classroom teacher has a student receiving support through the tutor corps, <strong>does that teacher know what the fellow is working on with their student?</strong> Is there a structure for that information to travel, or does it depend on whether the teacher and the fellow happen to talk?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                Whether tier-1 and tier-2 instruction are coordinated or parallel. A teacher who does not know what the fellow tried last week cannot build on it in the classroom. A fellow who does not know what the teacher tried cannot avoid repeating it. Both people are working from incomplete information about the same student.
+              </div>
+            </div>
+          </div>
+          <div class="q-item">
+            <div class="q-bullet"></div>
+            <div>
+              <div class="q-text">Think about a teacher who submitted a concern about a student three weeks ago. <strong>What does that teacher know right now</strong> about what happened after they submitted the concern — and how do they know it?</div>
+              <div class="q-listen">
+                <div class="q-listen-label">What this surfaces</div>
+                Whether the referral loop closes. Teachers who submit concerns and never hear back stop submitting them — not because they stop caring, but because the system has taught them that referrals disappear. The confirmation loop on Day 5 of the deployment protocol exists precisely to close this gap and keep teachers engaged in identifying students.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT COMES OUT -->
+    <div class="outcome-section">
+      <div class="outcome-header">
+        <div class="out-icon">📄</div>
+        <div>
+          <div class="out-title">What comes out of this session</div>
+          <div class="out-sub">The campus build brief · Reviewed by Chiffon before any protocol work begins</div>
+        </div>
+      </div>
+
+      <div class="brief-card">
+        <div class="brief-section-head">
+          <div class="brief-accent" style="background:var(--blue);"></div>
+          <div>
+            <div class="brief-section-label">Section 1</div>
+            <div class="brief-section-name">Schedule reality</div>
+          </div>
+        </div>
+        <div class="brief-body">
+          <div class="brief-row">
+            <div class="brief-field">Intervention block</div>
+            <div class="brief-value filled">When it runs, who leads it, what the typical structure looks like on a functioning day</div>
+          </div>
+          <div class="brief-row">
+            <div class="brief-field">Protection status</div>
+            <div class="brief-value filled">Who has authority over the block, most common disruptions, and what a coverage gap looks like when a fellow is absent</div>
+          </div>
+          <div class="brief-row">
+            <div class="brief-field">Schedule conflicts</div>
+            <div class="brief-value filled">Named conflicts that will require protocol accommodation at this specific campus</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brief-card">
+        <div class="brief-section-head">
+          <div class="brief-accent" style="background:var(--teal);"></div>
+          <div>
+            <div class="brief-section-label">Section 2</div>
+            <div class="brief-section-name">Current assignment logic</div>
+          </div>
+        </div>
+        <div class="brief-body">
+          <div class="brief-row">
+            <div class="brief-field">Assignment method</div>
+            <div class="brief-value filled">How assignments are currently made — data-driven, availability-based, relationship-based, or a combination</div>
+          </div>
+          <div class="brief-row">
+            <div class="brief-field">Dynamic vs. static</div>
+            <div class="brief-value filled">Whether assignments change across diagnostic cycles and what triggers a change when it does happen</div>
+          </div>
+          <div class="brief-row">
+            <div class="brief-field">Gaps identified</div>
+            <div class="brief-value filled">Specific students from the principal's list where assignment does not match diagnostic data</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brief-card">
+        <div class="brief-section-head">
+          <div class="brief-accent" style="background:var(--orange);"></div>
+          <div>
+            <div class="brief-section-label">Section 3</div>
+            <div class="brief-section-name">Data handoff gap</div>
+          </div>
+        </div>
+        <div class="brief-body">
+          <div class="brief-row">
+            <div class="brief-field">Pre-session data</div>
+            <div class="brief-value filled">What fellows currently know before a session, where it comes from, and how current it is</div>
+          </div>
+          <div class="brief-row">
+            <div class="brief-field">Post-session loop</div>
+            <div class="brief-value filled">Whether and how session outcomes travel back to the classroom teacher, and whether that loop is structured or informal</div>
+          </div>
+          <div class="brief-row">
+            <div class="brief-field">Diagnostic flow</div>
+            <div class="brief-value filled">How i-Ready diagnostic results reach the fellow after each cycle, and the typical lag time between data availability and fellow awareness</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brief-card">
+        <div class="brief-section-head">
+          <div class="brief-accent" style="background:var(--green);"></div>
+          <div>
+            <div class="brief-section-label">Section 4</div>
+            <div class="brief-section-name">Recommended protocol architecture</div>
+          </div>
+        </div>
+        <div class="brief-body">
+          <div class="brief-row">
+            <div class="brief-field">Assignment protocol</div>
+            <div class="brief-value filled">The specific routing logic recommended for this campus — how diagnostic data moves to fellow assignments and when</div>
+          </div>
+          <div class="brief-row">
+            <div class="brief-field">Handoff structure</div>
+            <div class="brief-value filled">The documented exchange between teacher and fellow before and after sessions — what travels, in what format, on what timeline</div>
+          </div>
+          <div class="brief-row">
+            <div class="brief-field">Movement trigger</div>
+            <div class="brief-value filled">The named decision point for this campus — who reviews, when they review, what the threshold is, and what the escalation pathway looks like</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="out-note">
+        <div class="out-note-title">Chiffon's review before the build begins</div>
+        <div class="out-note-body">The build brief goes to Chiffon before it goes to the campus principal. This is not a procedural step — it is a structural one. Chiffon sees every campus brief so she can confirm that what is being built at Downtown Middle is consistent with the architecture being built at Fairmount Heights Middle and Legacy Middle. The shared decision language across all three campuses is built into the brief review, not retrofitted after the protocols are written.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleQArea(num) {
+  const area = document.getElementById('qa' + num);
+  area.classList.toggle('closed');
+}
+</script>
+
+
+<!-- ══ SAMPLE COLLECTION FORM ══════════════════════════════════════ -->
+<div id="panel-prepform" class="panel">
+  <div class="container">
+
+    <style>
+      /* ── Sample banner ── */
+      .sample-banner {
+        display: flex; align-items: flex-start; gap: 14px;
+        background: var(--orange-light);
+        border: 1.5px solid rgba(242,140,56,.4);
+        border-radius: 12px; padding: 16px 20px;
+        margin-bottom: 32px;
+      }
+      .sample-banner-icon {
+        font-size: 20px; flex-shrink: 0; margin-top: 1px;
+      }
+      .sample-banner-title {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px; font-weight: 500;
+        letter-spacing: .1em; text-transform: uppercase;
+        color: #7A3D0A; margin-bottom: 5px;
+      }
+      .sample-banner-body {
+        font-size: 13px; color: #7A3D0A; line-height: 1.65;
+      }
+
+      /* ── Form sections ── */
+      .pf-section { margin-bottom: 32px; }
+      .pf-section-header {
+        display: flex; align-items: center; gap: 12px;
+        margin-bottom: 16px; padding-bottom: 12px;
+        border-bottom: 2px solid var(--border);
+      }
+      .pf-section-num {
+        width: 26px; height: 26px; border-radius: 50%;
+        background: var(--teal); color: var(--white);
+        font-family: 'DM Mono', monospace; font-size: 11px;
+        font-weight: 500; display: flex; align-items: center;
+        justify-content: center; flex-shrink: 0;
+      }
+      .pf-section-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 17px; color: var(--text);
+      }
+      .pf-section-badge {
+        font-family: 'DM Mono', monospace; font-size: 9.5px;
+        font-weight: 500; letter-spacing: .08em;
+        text-transform: uppercase; padding: 3px 10px;
+        border-radius: 20px; flex-shrink: 0;
+      }
+
+      /* ── Form fields ── */
+      .pf-field { margin-bottom: 20px; }
+      .pf-label {
+        display: block; font-size: 13.5px; font-weight: 600;
+        color: var(--text); margin-bottom: 6px; line-height: 1.5;
+      }
+      .pf-hint {
+        font-size: 12px; color: var(--text-light);
+        margin-bottom: 8px; line-height: 1.55;
+        font-style: italic;
+      }
+      .pf-input, .pf-textarea, .pf-select {
+        width: 100%; font-family: 'DM Sans', sans-serif;
+        font-size: 13.5px; color: var(--text);
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 8px; padding: 10px 14px;
+        transition: border-color .15s, box-shadow .15s;
+        outline: none; appearance: none;
+      }
+      .pf-input:focus, .pf-textarea:focus, .pf-select:focus {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(26,188,176,.1);
+      }
+      .pf-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+      .pf-select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A9BA3' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 36px; cursor: pointer;
+      }
+
+      /* Radio/checkbox groups */
+      .pf-options { display: flex; flex-direction: column; gap: 8px; }
+      .pf-option {
+        display: flex; align-items: flex-start; gap: 10px;
+        padding: 10px 14px; border: 1.5px solid var(--border);
+        border-radius: 8px; cursor: pointer;
+        transition: border-color .15s, background .15s;
+        font-size: 13.5px; color: var(--text); line-height: 1.5;
+      }
+      .pf-option:hover { border-color: var(--teal); background: var(--teal-light); }
+      .pf-option input[type=radio],
+      .pf-option input[type=checkbox] {
+        margin-top: 3px; flex-shrink: 0;
+        accent-color: var(--teal);
+        width: 15px; height: 15px;
+      }
+      .pf-option input:checked ~ span { font-weight: 500; }
+      .pf-option:has(input:checked) {
+        border-color: var(--teal);
+        background: var(--teal-light);
+      }
+      .pf-options-row { flex-direction: row; flex-wrap: wrap; }
+      .pf-options-row .pf-option { flex: 1 1 auto; min-width: 140px; }
+
+      /* Two-col layout for short fields */
+      .pf-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      @media(max-width:640px){ .pf-two { grid-template-columns: 1fr; } }
+
+      /* Submit / confirmation */
+      .pf-submit-row {
+        display: flex; align-items: center; gap: 16px;
+        padding-top: 24px; border-top: 2px solid var(--border);
+        margin-top: 8px;
+      }
+      .pf-submit-btn {
+        background: var(--teal); color: var(--white);
+        border: none; border-radius: 8px;
+        padding: 11px 28px; font-family: 'DM Sans', sans-serif;
+        font-size: 14px; font-weight: 600; cursor: pointer;
+        transition: background .15s, transform .1s;
+      }
+      .pf-submit-btn:hover { background: var(--teal-deep); }
+      .pf-submit-btn:active { transform: scale(.98); }
+      .pf-clear-btn {
+        background: none; border: 1.5px solid var(--border);
+        border-radius: 8px; padding: 10px 20px;
+        font-family: 'DM Sans', sans-serif; font-size: 13.5px;
+        color: var(--text-mid); cursor: pointer;
+        transition: border-color .15s, color .15s;
+      }
+      .pf-clear-btn:hover { border-color: var(--text-mid); color: var(--text); }
+      .pf-confirm {
+        display: none;
+        background: var(--teal-light); border: 1.5px solid rgba(26,188,176,.3);
+        border-radius: 12px; padding: 20px 24px; margin-top: 24px;
+        text-align: center;
+      }
+      .pf-confirm.visible { display: block; }
+      .pf-confirm-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 18px; color: var(--teal-deep); margin-bottom: 6px;
+      }
+      .pf-confirm-body {
+        font-size: 13px; color: var(--teal-deep); line-height: 1.65;
+      }
+
+      /* Bring checklist reminder */
+      .pf-bring-box {
+        background: var(--dark); border-radius: 12px;
+        padding: 22px 26px; margin-top: 8px;
+      }
+      .pf-bring-label {
+        font-family: 'DM Mono', monospace; font-size: 10px;
+        letter-spacing: .1em; text-transform: uppercase;
+        color: var(--teal); margin-bottom: 12px; font-weight: 500;
+      }
+      .pf-bring-item {
+        display: flex; gap: 10px; align-items: flex-start;
+        font-size: 13px; color: rgba(255,255,255,.75);
+        line-height: 1.6; margin-bottom: 8px;
+      }
+      .pf-bring-item:last-child { margin-bottom: 0; }
+      .pf-bring-dot {
+        width: 5px; height: 5px; border-radius: 50%;
+        background: var(--teal); margin-top: 6px; flex-shrink: 0;
+      }
+
+      /* Saved state chip */
+      .pf-saved-chip {
+        display: none; align-items: center; gap: 6px;
+        font-family: 'DM Mono', monospace; font-size: 10px;
+        letter-spacing: .07em; text-transform: uppercase;
+        color: var(--teal-deep); background: var(--teal-light);
+        padding: 4px 10px; border-radius: 20px; font-weight: 500;
+      }
+      .pf-saved-chip.visible { display: inline-flex; }
+    </style>
+
+    <div class="panel-label">Middle School · Discovery Session</div>
+    <div class="panel-title">Sample Collection Form</div>
+    <div class="panel-intro">This is a sample of the pre-session intake form that will be sent to each middle school principal before their discovery session. The actual deployed form will be configured in Google Forms or your district's preferred tool and linked directly from the session confirmation. This version demonstrates the question structure and flow.</div>
+
+    <!-- Sample banner -->
+    <div class="sample-banner">
+      <div class="sample-banner-icon">⚠</div>
+      <div>
+        <div class="sample-banner-title">Sample only — not the deployed form</div>
+        <div class="sample-banner-body">This form illustrates the structure and questions that will be collected prior to each discovery session. The live version will be distributed through your district's preferred channel. No responses submitted here are forwarded anywhere.</div>
+      </div>
+    </div>
+
+    <form id="pfForm" onsubmit="submitPF(event)">
+
+      <!-- ── SECTION 1: The Schedule ── -->
+      <div class="pf-section">
+        <div class="pf-section-header">
+          <div class="pf-section-num">1</div>
+          <div class="pf-section-title">The Schedule</div>
+          <span class="pf-section-badge" style="background:var(--teal-light);color:var(--teal-deep);">How the block runs</span>
+        </div>
+
+        <div class="pf-two">
+          <div class="pf-field">
+            <label class="pf-label">Campus name</label>
+            <input type="text" class="pf-input" name="campus" placeholder="e.g. Downtown Middle School">
+          </div>
+          <div class="pf-field">
+            <label class="pf-label">Your name and title</label>
+            <input type="text" class="pf-input" name="name" placeholder="e.g. Principal Jones">
+          </div>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">When does the intervention block run? Include grade, time, and days.</label>
+          <div class="pf-hint">Pull from your master schedule. A printed or photographed copy is fine to reference.</div>
+          <textarea class="pf-textarea" name="sched_when" placeholder="e.g. Grades 5–6: Mon/Wed/Fri 9:15–9:45am · Grades 7–8: Tue/Thu 10:00–10:30am"></textarea>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">Who has authority to protect the block when something else competes for that time?</label>
+          <input type="text" class="pf-input" name="sched_owner" placeholder="e.g. AP Martinez owns the block; conflicts go to her">
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">What most commonly pulls students out of the block during a typical week?</label>
+          <div class="pf-hint">Be honest here — the most common answer is testing, assemblies, or pull-outs. All of those are workable.</div>
+          <textarea class="pf-textarea" name="sched_disruptions" placeholder="e.g. State testing pulls 6th graders roughly two weeks per month · IEP pull-outs happen without consistent notice"></textarea>
+        </div>
+      </div>
+
+      <!-- ── SECTION 2: The Assignment ── -->
+      <div class="pf-section">
+        <div class="pf-section-header">
+          <div class="pf-section-num">2</div>
+          <div class="pf-section-title">The Assignment</div>
+          <span class="pf-section-badge" style="background:var(--blue-light);color:var(--blue);">How fellows are matched to students</span>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">How are fellows currently assigned to students? Select all that apply.</label>
+          <div class="pf-options">
+            <label class="pf-option"><input type="checkbox" name="assign_method" value="diagnostic"><span>Based on i-Ready diagnostic scores</span></label>
+            <label class="pf-option"><input type="checkbox" name="assign_method" value="availability"><span>Based on fellow schedule availability</span></label>
+            <label class="pf-option"><input type="checkbox" name="assign_method" value="teacher_request"><span>Based on a teacher's direct request</span></label>
+            <label class="pf-option"><input type="checkbox" name="assign_method" value="relationship"><span>Based on established fellow-student relationships</span></label>
+            <label class="pf-option"><input type="checkbox" name="assign_method" value="dean"><span>The Dean of Fellows makes assignments using her own judgment</span></label>
+            <label class="pf-option"><input type="checkbox" name="assign_method" value="other"><span>Other — describe below</span></label>
+          </div>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">How often do fellow assignments change during the year?</label>
+          <div class="pf-options">
+            <label class="pf-option"><input type="radio" name="assign_frequency" value="never"><span>They rarely or never change once set</span></label>
+            <label class="pf-option"><input type="radio" name="assign_frequency" value="each_cycle"><span>They are reviewed and updated after each i-Ready diagnostic cycle</span></label>
+            <label class="pf-option"><input type="radio" name="assign_frequency" value="on_request"><span>They change when a teacher or principal requests it</span></label>
+            <label class="pf-option"><input type="radio" name="assign_frequency" value="on_problem"><span>They change when a problem surfaces with the current arrangement</span></label>
+            <label class="pf-option"><input type="radio" name="assign_frequency" value="unsure"><span>Unsure — this isn't tracked consistently</span></label>
+          </div>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">Think of the five to eight students you are currently watching. Were their Tutor Corps assignments made based on diagnostic data?</label>
+          <div class="pf-options pf-options-row">
+            <label class="pf-option"><input type="radio" name="assign_diagnostic" value="yes"><span>Yes, all of them</span></label>
+            <label class="pf-option"><input type="radio" name="assign_diagnostic" value="some"><span>Some of them</span></label>
+            <label class="pf-option"><input type="radio" name="assign_diagnostic" value="no"><span>No — other factors drove those assignments</span></label>
+            <label class="pf-option"><input type="radio" name="assign_diagnostic" value="unsure"><span>Unsure</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECTION 3: The Data ── -->
+      <div class="pf-section">
+        <div class="pf-section-header">
+          <div class="pf-section-num">3</div>
+          <div class="pf-section-title">The Data</div>
+          <span class="pf-section-badge" style="background:var(--orange-light);color:#7A3D0A;">Screening, identification & data flow</span>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">What does it take for a student to be identified for Tutor Corps support at your campus? Is that threshold written down anywhere?</label>
+          <div class="pf-hint">This could be a specific i-Ready score, a score plus a teacher flag, a number of consecutive cycles below benchmark, or something else entirely. If it is informal, say so — that is useful information.</div>
+          <textarea class="pf-textarea" name="data_threshold" placeholder="e.g. Students scoring more than 1.5 grade levels below on i-Ready reading automatically get a flag · teacher confirmation required before assignment · not formally written down anywhere"></textarea>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">After a diagnostic cycle closes, where do results go — and in what form does the Dean of Fellows or a classroom teacher actually access them?</label>
+          <div class="pf-hint">Your team is already running these cycles. This question is about where the output lands and who touches it before it reaches the fellow.</div>
+          <textarea class="pf-textarea" name="data_flow" placeholder="e.g. Results are in i-Ready · Dean of Fellows runs a manual export weekly · classroom teachers access their own class reports but don't typically share with fellows"></textarea>
+        </div>
+
+        <div class="pf-two">
+          <div class="pf-field">
+            <label class="pf-label">Who is your campus data coordinator?</label>
+            <input type="text" class="pf-input" name="data_coordinator" placeholder="Name and role">
+          </div>
+          <div class="pf-field">
+            <label class="pf-label">How much lead time does a de-identified data pull typically require?</label>
+            <select class="pf-select" name="data_lead_time">
+              <option value="" disabled selected>Select lead time</option>
+              <option value="same_day">Same day — routine for our coordinator</option>
+              <option value="few_days">A few days with advance notice</option>
+              <option value="week_plus">A week or more</option>
+              <option value="requires_approval">Requires data governance review or approval</option>
+              <option value="unsure">Unsure — I would need to check</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECTION 4: The Data Handoff ── -->
+      <div class="pf-section">
+        <div class="pf-section-header">
+          <div class="pf-section-num">4</div>
+          <div class="pf-section-title">The Data Handoff</div>
+          <span class="pf-section-badge" style="background:var(--green-light);color:var(--green);">What the fellow knows before the session</span>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">Before a fellow sits down with a student, what do they typically know about that student? Where did that information come from and when did they receive it?</label>
+          <textarea class="pf-textarea" name="handoff_pre" placeholder="e.g. Fellows know what they've learned from working with the student · they do not typically receive the i-Ready report before sessions · some fellows check i-Ready independently"></textarea>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">After a fellow session, does the classroom teacher learn what happened? Is there a structured way that information travels, or does it depend on those two people finding each other?</label>
+          <textarea class="pf-textarea" name="handoff_post" placeholder="e.g. No structured handoff · teachers sometimes check in informally · there is a shared log but it is not consistently used"></textarea>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">Is there a documented handoff structure of any kind between teachers and fellows at this campus?</label>
+          <div class="pf-options pf-options-row">
+            <label class="pf-option"><input type="radio" name="handoff_documented" value="yes_used"><span>Yes — and it is actively used</span></label>
+            <label class="pf-option"><input type="radio" name="handoff_documented" value="yes_inconsistent"><span>Yes — but use is inconsistent</span></label>
+            <label class="pf-option"><input type="radio" name="handoff_documented" value="no"><span>No — it is informal</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECTION 5: The Movement Trigger ── -->
+      <div class="pf-section">
+        <div class="pf-section-header">
+          <div class="pf-section-num">5</div>
+          <div class="pf-section-title">The Movement Trigger</div>
+          <span class="pf-section-badge" style="background:var(--purple-light);color:var(--purple);">When and how a student moves</span>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">When a student has been in the intervention block for a full cycle without showing progress, what triggers the next conversation? Who initiates it, and what are the possible outcomes?</label>
+          <div class="pf-hint">If the answer is "it depends" or "a data meeting eventually" — that is a valid answer and useful to know.</div>
+          <textarea class="pf-textarea" name="movement_trigger" placeholder="e.g. The Dean of Fellows flags it at the monthly data meeting · principal reviews after each diagnostic cycle · no formal trigger — it surfaces when a teacher raises concern"></textarea>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">Is the movement trigger written down anywhere as a named decision point?</label>
+          <div class="pf-options pf-options-row">
+            <label class="pf-option"><input type="radio" name="movement_documented" value="yes"><span>Yes — it is in a written protocol</span></label>
+            <label class="pf-option"><input type="radio" name="movement_documented" value="informal"><span>It is understood but not formally written</span></label>
+            <label class="pf-option"><input type="radio" name="movement_documented" value="no"><span>No — it is not defined anywhere</span></label>
+          </div>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">Of the students you are currently watching — for any who have been at the same support level for more than one diagnostic cycle, is there a documented reason they have not moved?</label>
+          <div class="pf-options pf-options-row">
+            <label class="pf-option"><input type="radio" name="movement_rationale" value="yes"><span>Yes — reasons are documented</span></label>
+            <label class="pf-option"><input type="radio" name="movement_rationale" value="some"><span>Some are documented, others are not</span></label>
+            <label class="pf-option"><input type="radio" name="movement_rationale" value="no"><span>No — they have not been formally reviewed</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECTION 6: The Tier 1 Connection ── -->
+      <div class="pf-section">
+        <div class="pf-section-header">
+          <div class="pf-section-num">6</div>
+          <div class="pf-section-title">The Tier 1 Connection</div>
+          <span class="pf-section-badge" style="background:#F0FDF4;color:#166534;">What the classroom teacher knows</span>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">When a classroom teacher has a student receiving Tutor Corps support, does that teacher know what the fellow is working on with their student? Is there a structure for that information to travel?</label>
+          <textarea class="pf-textarea" name="tier1_teacher" placeholder="e.g. Teachers know in general terms · there is no formal communication loop · some teachers and fellows coordinate independently based on relationship"></textarea>
+        </div>
+
+        <div class="pf-field">
+          <label class="pf-label">Think of a teacher who submitted a concern about a student three weeks ago. What does that teacher know right now about what happened after they submitted that concern — and how do they know it?</label>
+          <div class="pf-hint">This question is about the referral loop. There is no right answer — it is designed to surface whether teachers receive confirmation that referrals go somewhere.</div>
+          <textarea class="pf-textarea" name="tier1_loop" placeholder="e.g. The teacher likely knows nothing unless they asked someone directly · we do not have a formal confirmation process · the Dean of Fellows usually follows up verbally within a week"></textarea>
+        </div>
+      </div>
+
+      <!-- ── WHAT TO BRING REMINDER ── -->
+      <div class="pf-bring-box">
+        <div class="pf-bring-label">Bring to the discovery session</div>
+        <div class="pf-bring-item"><div class="pf-bring-dot"></div>Current master schedule showing the intervention block</div>
+        <div class="pf-bring-item"><div class="pf-bring-dot"></div>i-Ready diagnostic report — most recent cycle</div>
+        <div class="pf-bring-item"><div class="pf-bring-dot"></div>Fellow roster and current assignments</div>
+        <div class="pf-bring-item"><div class="pf-bring-dot"></div>Whetstone observation data — last 90 days</div>
+        <div class="pf-bring-item"><div class="pf-bring-dot"></div>Any active SBIT or SOC documentation</div>
+        <div class="pf-bring-item"><div class="pf-bring-dot"></div>Five to eight students you are currently watching</div>
+      </div>
+
+      <!-- ── SUBMIT ── -->
+      <div class="pf-submit-row" style="margin-top:28px;">
+        <button type="submit" class="pf-submit-btn">Save Responses</button>
+        <button type="button" class="pf-clear-btn" onclick="clearPF()">Clear form</button>
+        <span class="pf-saved-chip" id="pfSavedChip">✓ Saved</span>
+      </div>
+    </form>
+
+    <div class="pf-confirm" id="pfConfirm">
+      <div class="pf-confirm-title">Responses saved for the session.</div>
+      <div class="pf-confirm-body">These responses will be available to review before the discovery session begins. Nothing submitted here is shared outside this page.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function submitPF(e) {
+  e.preventDefault();
+  const form = document.getElementById('pfForm');
+  const data = {};
+  const inputs = form.querySelectorAll('input, textarea, select');
+  inputs.forEach(el => {
+    if (!el.name) return;
+    if (el.type === 'checkbox') {
+      if (!data[el.name]) data[el.name] = [];
+      if (el.checked) data[el.name].push(el.value);
+    } else if (el.type === 'radio') {
+      if (el.checked) data[el.name] = el.value;
+    } else {
+      data[el.name] = el.value;
+    }
+  });
+  try {
+    window.storage.set('gol_prep_form', JSON.stringify(data)).then(() => {
+      document.getElementById('pfSavedChip').classList.add('visible');
+      document.getElementById('pfConfirm').classList.add('visible');
+      setTimeout(() => {
+        document.getElementById('pfSavedChip').classList.remove('visible');
+      }, 3000);
+    });
+  } catch(err) {
+    // Fallback if storage unavailable
+    document.getElementById('pfSavedChip').classList.add('visible');
+    document.getElementById('pfConfirm').classList.add('visible');
+    setTimeout(() => document.getElementById('pfSavedChip').classList.remove('visible'), 3000);
+  }
+}
+
+function clearPF() {
+  document.getElementById('pfForm').reset();
+  document.getElementById('pfConfirm').classList.remove('visible');
+  document.getElementById('pfSavedChip').classList.remove('visible');
+  try { window.storage.delete('gol_prep_form'); } catch(e) {}
+}
+
+// Restore saved responses on load
+(async function restorePF() {
+  try {
+    const saved = await window.storage.get('gol_prep_form');
+    if (!saved || !saved.value) return;
+    const data = JSON.parse(saved.value);
+    const form = document.getElementById('pfForm');
+    Object.entries(data).forEach(([name, val]) => {
+      const els = form.querySelectorAll(`[name="${name}"]`);
+      els.forEach(el => {
+        if (el.type === 'checkbox') {
+          el.checked = Array.isArray(val) && val.includes(el.value);
+        } else if (el.type === 'radio') {
+          el.checked = el.value === val;
+        } else {
+          el.value = val || '';
+        }
+      });
+    });
+  } catch(e) {}
+})();
+</script>
 
 <!-- FOOTER -->
 <div class="footer">
