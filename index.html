@@ -1986,27 +1986,20 @@ function toggleQArea(num) {
 
       <!-- ── SUBMIT ── -->
       <div class="pf-submit-row" style="margin-top:28px;">
-        <button type="submit" class="pf-submit-btn">Save Responses</button>
+        <button type="button" class="pf-submit-btn" onclick="generatePDF()">&#8681; Generate PDF</button>
         <button type="button" class="pf-clear-btn" onclick="clearPF()">Clear form</button>
-        <span class="pf-saved-chip" id="pfSavedChip">✓ Saved</span>
       </div>
+      <p style="font-size:12px;color:var(--text-light);margin-top:10px;line-height:1.6;">The PDF will open in a new tab. Print or save it, then email to <strong style="color:var(--text);">chief@tieredjusticenow.com</strong> — this gives both parties a record before the discovery session.</p>
     </form>
-
-    <div class="pf-confirm" id="pfConfirm">
-      <div class="pf-confirm-title">Responses saved for the session.</div>
-      <div class="pf-confirm-body">These responses will be available to review before the discovery session begins. Nothing submitted here is shared outside this page.</div>
-    </div>
 
   </div>
 </div>
 
 <script>
-function submitPF(e) {
-  e.preventDefault();
+function collectFormData() {
   const form = document.getElementById('pfForm');
   const data = {};
-  const inputs = form.querySelectorAll('input, textarea, select');
-  inputs.forEach(el => {
+  form.querySelectorAll('input, textarea, select').forEach(el => {
     if (!el.name) return;
     if (el.type === 'checkbox') {
       if (!data[el.name]) data[el.name] = [];
@@ -2017,50 +2010,174 @@ function submitPF(e) {
       data[el.name] = el.value;
     }
   });
-  try {
-    window.storage.set('gol_prep_form', JSON.stringify(data)).then(() => {
-      document.getElementById('pfSavedChip').classList.add('visible');
-      document.getElementById('pfConfirm').classList.add('visible');
-      setTimeout(() => {
-        document.getElementById('pfSavedChip').classList.remove('visible');
-      }, 3000);
-    });
-  } catch(err) {
-    // Fallback if storage unavailable
-    document.getElementById('pfSavedChip').classList.add('visible');
-    document.getElementById('pfConfirm').classList.add('visible');
-    setTimeout(() => document.getElementById('pfSavedChip').classList.remove('visible'), 3000);
+  return data;
+}
+
+function val(data, key, fallback) {
+  const v = data[key];
+  if (!v || (Array.isArray(v) && v.length === 0)) return fallback || '<em style="color:#8A9BA3;">Not provided</em>';
+  if (Array.isArray(v)) return v.join(', ');
+  return v;
+}
+
+function row(label, value) {
+  return `
+    <div style="margin-bottom:18px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#8A9BA3;margin-bottom:4px;">${label}</div>
+      <div style="font-size:13px;color:#1A2A30;line-height:1.65;padding:10px 14px;background:#F8FAFB;border-radius:6px;border-left:3px solid #1ABCB0;">${value}</div>
+    </div>`;
+}
+
+function sectionHead(num, title, badge, badgeBg, badgeColor) {
+  return `
+    <div style="display:flex;align-items:center;gap:12px;margin:28px 0 16px;padding-bottom:10px;border-bottom:2px solid #E2E8F0;">
+      <div style="width:24px;height:24px;border-radius:50%;background:#1ABCB0;color:#fff;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${num}</div>
+      <div style="font-family:'Georgia',serif;font-size:17px;color:#1A2A30;">${title}</div>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:${badgeBg};color:${badgeColor};">${badge}</span>
+    </div>`;
+}
+
+function radioLabel(val) {
+  const map = {
+    // assignment frequency
+    never: 'Rarely or never change once set',
+    each_cycle: 'Reviewed after each diagnostic cycle',
+    on_request: 'Change when a teacher or principal requests it',
+    on_problem: 'Change when a problem surfaces',
+    unsure: 'Unsure — not tracked consistently',
+    // assign diagnostic
+    yes: 'Yes — all of them',
+    some: 'Some of them',
+    no: 'No — other factors drove those assignments',
+    // data lead time
+    same_day: 'Same day — routine for our coordinator',
+    few_days: 'A few days with advance notice',
+    week_plus: 'A week or more',
+    requires_approval: 'Requires data governance review or approval',
+    // handoff documented
+    yes_used: 'Yes — and it is actively used',
+    yes_inconsistent: 'Yes — but use is inconsistent',
+    // movement documented
+    informal: 'Understood but not formally written',
+    // movement rationale
+    // 'yes', 'some', 'no' already mapped
+  };
+  return map[val] || val;
+}
+
+function generatePDF() {
+  const d = collectFormData();
+  const campus = d.campus || 'Campus not specified';
+  const respName = d.name || 'Not provided';
+  const today = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+
+  const assignMethods = Array.isArray(d.assign_method) ? d.assign_method.map(v => {
+    const m = {diagnostic:'i-Ready diagnostic scores',availability:'Schedule availability',teacher_request:'Teacher request',relationship:'Established relationships',dean:'Dean of Fellows judgment',other:'Other'};
+    return m[v] || v;
+  }).join(' · ') : '<em style="color:#8A9BA3;">Not provided</em>';
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pre-Session Prep — ${campus}</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: #fff; color: #1A2A30; }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none !important; }
+    .page-break { page-break-before: always; }
   }
+</style>
+</head>
+<body>
+<div style="max-width:720px;margin:0 auto;padding:48px 40px;">
+
+  <!-- HEADER -->
+  <div style="background:#0B1215;border-radius:12px;padding:28px 32px;margin-bottom:32px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(26,188,176,.15) 0%,transparent 70%);"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#1ABCB0;margin-bottom:10px;">Great Oaks Legacy Charter Schools · EJC Support Infrastructure Build</div>
+    <div style="font-size:26px;color:#fff;margin-bottom:6px;">Pre-Session Prep</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.5);font-weight:300;">Middle School Discovery Session · Sample Collection Form</div>
+    <div style="display:flex;gap:24px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.4);">Campus: <span style="color:rgba(255,255,255,.75);">${campus}</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.4);">Completed by: <span style="color:rgba(255,255,255,.75);">${respName}</span></div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.4);">Date: <span style="color:rgba(255,255,255,.75);">${today}</span></div>
+    </div>
+  </div>
+
+  <!-- EMAIL INSTRUCTION BOX -->
+  <div class="no-print" style="background:#FEF3E8;border:1.5px solid rgba(242,140,56,.4);border-radius:10px;padding:16px 20px;margin-bottom:28px;display:flex;gap:12px;align-items:flex-start;">
+    <div style="font-size:18px;flex-shrink:0;">📧</div>
+    <div>
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#7A3D0A;margin-bottom:5px;font-weight:500;">Action required before your session</div>
+      <div style="font-size:13px;color:#7A3D0A;line-height:1.65;">Print this page or save as PDF, then email it to <strong>chief@tieredjusticenow.com</strong>. This gives both you and the EJC project lead a record of your responses before the discovery session begins.</div>
+    </div>
+  </div>
+  <div style="background:#FEF3E8;border:1.5px solid rgba(242,140,56,.4);border-radius:10px;padding:16px 20px;margin-bottom:28px;display:none;" class="print-only">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#7A3D0A;margin-bottom:5px;font-weight:500;">Please email this completed form to:</div>
+    <div style="font-size:15px;font-weight:bold;color:#7A3D0A;">chief@tieredjusticenow.com</div>
+    <div style="font-size:12px;color:#7A3D0A;margin-top:4px;">This gives both parties a record before the discovery session. Subject line: Pre-Session Prep — ${campus}</div>
+  </div>
+
+  <!-- SECTION 1 -->
+  ${sectionHead(1, 'The Schedule', 'How the block runs', '#E4F7F5', '#0D6B64')}
+  ${row('Intervention block — grade, time, days', val(d,'sched_when'))}
+  ${row('Who has authority to protect the block', val(d,'sched_owner'))}
+  ${row('What most commonly disrupts the block', val(d,'sched_disruptions'))}
+
+  <!-- SECTION 2 -->
+  ${sectionHead(2, 'The Assignment', 'How fellows are matched to students', '#EBF2FA', '#3B7DD8')}
+  ${row('How fellows are currently assigned', assignMethods)}
+  ${row('How often assignments change', radioLabel(val(d,'assign_frequency','')))}
+  ${row('Were the students you are watching assigned based on diagnostic data?', radioLabel(val(d,'assign_diagnostic','')))}
+
+  <!-- SECTION 3 -->
+  ${sectionHead(3, 'The Data', 'Screening, identification & data flow', '#FEF3E8', '#7A3D0A')}
+  ${row('Identification threshold — what gets a student to support, is it written down?', val(d,'data_threshold'))}
+  ${row('Where diagnostic results go and who accesses them', val(d,'data_flow'))}
+  ${row('Campus data coordinator', val(d,'data_coordinator'))}
+  ${row('Lead time for a de-identified data pull', val(d,'data_lead_time','').replace(/_/g,' '))}
+
+  <!-- SECTION 4 -->
+  ${sectionHead(4, 'The Data Handoff', 'What the fellow knows before the session', '#E4F5F3', '#1E8F7F')}
+  ${row('What the fellow typically knows before a session and where it comes from', val(d,'handoff_pre'))}
+  ${row('Whether and how the classroom teacher learns what happened after a session', val(d,'handoff_post'))}
+  ${row('Is there a documented handoff structure?', radioLabel(val(d,'handoff_documented','')))}
+
+  <!-- SECTION 5 -->
+  ${sectionHead(5, 'The Movement Trigger', 'When and how a student moves', '#F3EEFF', '#7C5CBF')}
+  ${row('What triggers the next conversation when a student is not progressing', val(d,'movement_trigger'))}
+  ${row('Is the movement trigger written down as a named decision point?', radioLabel(val(d,'movement_documented','')))}
+  ${row('For students at the same level for more than one cycle — is the reason documented?', radioLabel(val(d,'movement_rationale','')))}
+
+  <!-- SECTION 6 -->
+  ${sectionHead(6, 'The Tier 1 Connection', 'What the classroom teacher knows', '#F0FDF4', '#166534')}
+  ${row('Whether and how classroom teachers know what the fellow is working on', val(d,'tier1_teacher'))}
+  ${row('What a teacher who submitted a concern three weeks ago knows right now', val(d,'tier1_loop'))}
+
+  <!-- FOOTER -->
+  <div style="margin-top:40px;padding-top:20px;border-top:1px solid #E2E8F0;display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:#8A9BA3;">EdJustice Collective · Build Systems. Promote Justice.</div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:#8A9BA3;">chief@tieredjusticenow.com · (703) 727-9385</div>
+  </div>
+
+</div>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 800);
 }
 
 function clearPF() {
   document.getElementById('pfForm').reset();
-  document.getElementById('pfConfirm').classList.remove('visible');
-  document.getElementById('pfSavedChip').classList.remove('visible');
-  try { window.storage.delete('gol_prep_form'); } catch(e) {}
 }
-
-// Restore saved responses on load
-(async function restorePF() {
-  try {
-    const saved = await window.storage.get('gol_prep_form');
-    if (!saved || !saved.value) return;
-    const data = JSON.parse(saved.value);
-    const form = document.getElementById('pfForm');
-    Object.entries(data).forEach(([name, val]) => {
-      const els = form.querySelectorAll(`[name="${name}"]`);
-      els.forEach(el => {
-        if (el.type === 'checkbox') {
-          el.checked = Array.isArray(val) && val.includes(el.value);
-        } else if (el.type === 'radio') {
-          el.checked = el.value === val;
-        } else {
-          el.value = val || '';
-        }
-      });
-    });
-  } catch(e) {}
-})();
 </script>
 
 <!-- FOOTER -->
